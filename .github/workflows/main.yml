@@ -1,0 +1,29 @@
+# 1. Даем имя нашему рабочему процессу. Оно будет отображаться на GitHub.
+name: Run Python Tests in Docker
+
+# 2. Указываем триггер (событие), который будет запускать этот процесс.
+on:
+  push:
+    branches: [ master, main ]  # Запускать при пуше в ветки master или main
+  pull_request:
+    branches: [ master, main ]  # Запускать при создании pull request в эти ветки
+
+# 3. Описываем "работу" (job), которую нужно выполнить.
+jobs:
+  build-and-test:
+    # 4. Выбираем тип виртуальной машины для выполнения работы.
+    runs-on: ubuntu-latest
+
+    # 5. Описываем последовательность шагов, которые нужно выполнить.
+    steps:
+      # Шаг 1: Скачиваем наш код из репозитория на виртуальную машину.
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Собираем наш Docker-образ.
+      - name: Build Docker image
+        run: docker build -t wiki-test .
+
+      # Шаг 3: Запускаем контейнер с тестами.
+      - name: Run tests in Docker container
+        run: docker run --rm wiki-test
